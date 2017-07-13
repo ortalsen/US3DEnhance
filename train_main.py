@@ -67,16 +67,12 @@ def print_valid_MSE(test_batch_size,num_test,indValid,log_file):
         MSEtot[i:j] = MSEbatch
         i = j
     mean_MSE = np.mean(MSEtot)
-    pSNR = 20*np.log10(1/np.sqrt(MSEtot))
-    mean_pSNR = np.mean(pSNR)
-
-    msg = "mean MSE on Validation-Set: {0}"
-    print(msg.format(mean_MSE))
-    log_file.write(msg.format(mean_MSE)+'\n')
-
-    msg = "mean pSNR on Validation-Set: {0}"
-    print(msg.format(mean_pSNR))
-    log_file.write(msg.format(mean_pSNR)+'\n')
+    if log_file is not None:
+        msg = "mean MSE on Validation-Set: {0}"
+        print(msg.format(mean_MSE))
+        log_file.write(msg.format(mean_MSE) + '\n')
+    else:
+        return mean_MSE
 def optimize(num_iterations,train_batch_size,indTrain,indValid,dataPath):
     start_time = time.time()
     j = 0
@@ -103,32 +99,32 @@ def optimize(num_iterations,train_batch_size,indTrain,indValid,dataPath):
         feed_dict_train = {x: x_batch,
                            y_true: y_true_batch}
         session.run(train,feed_dict=feed_dict_train)
-        if i % 1000 == 0:
-            log_file = open('log.txt', 'a')
+        if (i+1) % 320 == 0 and i>0:
+            log_file = open('/home/ortalsenouf/Documents/logs/3Dlogs/exp1.txt', 'a')
             MSE = session.run(cost, feed_dict=feed_dict_train)
             msg = "Optimization Iteration: {0}, Training loss: {1}"
             print(msg.format(i + 1, MSE))
             log_file.write(msg.format(i + 1, MSE)+'\n')
             print_valid_MSE(test_batch_size=2, num_test=num4Val, indValid=indValid,log_file =log_file)
             log_file.close()
-            if i > 999:
+            if i > 319:
                 fig.clf()
             fig, valdiff, valErr = plot_training_curve.plot_training_curve(
-                '/home/ortalsenouf/Documents/logs/Mars22_17/log_sep2.txt', 640)
+                '/home/ortalsenouf/Documents/logs/3Dlogs/exp1.txt', 320)
             valdiff = 1
             if valErr<valMSE:
                 valMSE=valErr
-                saver.save(session, '/home/ortalsenouf/Documents/checkpoints/June4/iter' + str(i))
+                saver.save(session, '/home/ortalsenouf/Documents/checkpoints/3DJul12' + str(i))
             if valdiff <= stoppingCriteria or valdiff < 0:
                 criteriaCheck += 1
             fig.show()
-            fig.savefig('/home/ortalsenouf/Documents/logs/Mars22_17/training_curve_sep2.png')
+            fig.savefig('/home/ortalsenouf/Documents/logs/3Dlogs/curve_exp1.png')
             if criteriaCheck >= earlyStoppingIters:
                 break
     end_time = time.time()
     time_dif = end_time - start_time
     print("Time usage: " + str(timedelta(seconds=int(round(time_dif)))))
-    log_file = open('log.txt','a')
+    log_file = open('/home/ortalsenouf/Documents/logs/3Dlogs/exp1.txt','a')
     log_file.write("Time usage: " + str(timedelta(seconds=int(round(time_dif)))) + '\n')
     log_file.close()
 #######################Run Optimization and Test##############################

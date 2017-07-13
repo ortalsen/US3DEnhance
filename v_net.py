@@ -66,7 +66,7 @@ def V_net(x,kernel_size,initializer,nonlinearity):
     layer_UpConv_in8_out16 = layers.conv3d_transpose(inputs=out_block_c15,filters=128,kernel_size=kernel_size,padding='same',
                                                strides=(2,2,2),kernel_initializer=initializer,
                                                activation=nonlinearity,name="weights_UpConv_in8_out16")
-    layer_concat_in16 = tf.concat(concat_dim=4, values=[layer_UpConv_in8_out16, out_block_c14])
+    layer_concat_in16 = tf.concat(axis=4, values=[layer_UpConv_in8_out16, out_block_c14])
     ################################ Block6 ############################################################################
     layer_conv_in16_ch256 = layer_concat_in16
     for i in range(3):
@@ -82,7 +82,7 @@ def V_net(x,kernel_size,initializer,nonlinearity):
     layer_UpConv_in16_out32 = layers.conv3d_transpose(inputs=out_block_c24,filters=64,kernel_size=kernel_size,padding='same',
                                                strides=(2,2,2),kernel_initializer=initializer,
                                                activation=nonlinearity,name="weights_UpConv_in16_out32")
-    layer_concat_in32 = tf.concat(concat_dim=4, values=[layer_UpConv_in16_out32, out_block_c13])
+    layer_concat_in32 = tf.concat(axis=4, values=[layer_UpConv_in16_out32, out_block_c13])
     ############################## Block7 ##############################################################################
     layer_conv_in32_ch128 = layer_concat_in32
     for i in range(3):
@@ -98,7 +98,7 @@ def V_net(x,kernel_size,initializer,nonlinearity):
     layer_UpConv_in32_out64 = layers.conv3d_transpose(inputs=out_block_c23,filters=32,kernel_size=kernel_size,padding='same',
                                                strides=(2,2,2),kernel_initializer=initializer,
                                                activation=nonlinearity,name="weights_UpConv_in32_out64")
-    layer_concat_in64 = tf.concat(concat_dim=4, values=[layer_UpConv_in32_out64, out_block_c12])
+    layer_concat_in64 = tf.concat(axis=4, values=[layer_UpConv_in32_out64, out_block_c12])
     ############################ Block8 ################################################################################
     layer_conv_in64_ch64 = layer_concat_in64
     for i in range(2):
@@ -114,7 +114,7 @@ def V_net(x,kernel_size,initializer,nonlinearity):
     layer_UpConv_in64_out128 = layers.conv3d_transpose(inputs=out_block_c22,filters=16,kernel_size=kernel_size,padding='same',
                                                strides=(2,2,2),kernel_initializer=initializer,
                                                activation=nonlinearity,name="weights_UpConv_in64_out128")
-    layer_concat_in128 = tf.concat(concat_dim=4, values=[layer_UpConv_in64_out128, out_block_c11])
+    layer_concat_in128 = tf.concat(axis=4, values=[layer_UpConv_in64_out128, out_block_c11])
     ########################### Block9 #################################################################################
     layer_conv_in128_ch32 = layers.conv3d(inputs=layer_concat_in128,filters=32,kernel_size=kernel_size,
                                          padding='same',kernel_initializer=initializer,activation=None,
