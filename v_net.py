@@ -9,7 +9,7 @@ def V_net(x,kernel_size,initializer,nonlinearity):
                                           name="weights_conv_in128_ch16")
     out_block_c11 = tf.nn.relu(tf.add(layer_conv_in128_ch16, tiled_Input))
     ############################### Stride1 #############################################################################
-    layer_downConv_in128_out64 = layers.conv3d(inputs=out_block_c11,filters=32,kernel_size=kernel_size,padding='same',
+    layer_downConv_in128_out64 = layers.conv3d(inputs=out_block_c11,filters=32,kernel_size=2,padding='same',
                                                strides=(2,2,2),kernel_initializer=initializer,
                                                activation=nonlinearity,name="weights_downConv_in128_out64")
     ############################### Block2 #############################################################################
@@ -18,7 +18,7 @@ def V_net(x,kernel_size,initializer,nonlinearity):
                                           name="weights_conv_in64_ch32")
     out_block_c12 = tf.nn.relu(tf.add(layer_conv_in64_ch32, layer_downConv_in128_out64))
     ################################ Stride2 ###########################################################################
-    layer_downConv_in64_out32 = layers.conv3d(inputs=out_block_c12,filters=64,kernel_size=kernel_size,padding='same',
+    layer_downConv_in64_out32 = layers.conv3d(inputs=out_block_c12,filters=64,kernel_size=2,padding='same',
                                                strides=(2,2,2),kernel_initializer=initializer,
                                                activation=nonlinearity,name="weights_downConv_in64_out32")
     ############################## Block3 ##############################################################################
@@ -33,7 +33,7 @@ def V_net(x,kernel_size,initializer,nonlinearity):
                                           name="weights_conv_in64_ch32_"+str(i+1))
     out_block_c13 = tf.nn.relu(tf.add(layer_conv_in32_ch64, layer_downConv_in64_out32))
     ############################### Stride3 ############################################################################
-    layer_downConv_in32_out16 = layers.conv3d(inputs=out_block_c13,filters=128,kernel_size=kernel_size,padding='same',
+    layer_downConv_in32_out16 = layers.conv3d(inputs=out_block_c13,filters=128,kernel_size=2,padding='same',
                                                strides=(2,2,2),kernel_initializer=initializer,
                                                activation=nonlinearity,name="weights_downConv_in32_out16")
     ############################### Block4 #############################################################################
@@ -48,7 +48,7 @@ def V_net(x,kernel_size,initializer,nonlinearity):
                                              name="weights_conv_in16_ch128_" + str(i + 1))
     out_block_c14 = tf.nn.relu(tf.add(layer_conv_in16_ch128, layer_downConv_in32_out16))
     ################################ Stride4 ###########################################################################
-    layer_downConv_in16_out8 = layers.conv3d(inputs=out_block_c14,filters=256,kernel_size=kernel_size,padding='same',
+    layer_downConv_in16_out8 = layers.conv3d(inputs=out_block_c14,filters=256,kernel_size=2,padding='same',
                                                strides=(2,2,2),kernel_initializer=initializer,
                                                activation=nonlinearity,name="weights_downConv_in16_out8")
     ################################# Block5 ###########################################################################
@@ -63,7 +63,7 @@ def V_net(x,kernel_size,initializer,nonlinearity):
                                               name="weights_conv_in8_ch256_" + str(i + 1))
     out_block_c15 = tf.nn.relu(tf.add(layer_conv_in8_ch256, layer_downConv_in16_out8))
     ################################  deconv1 ##########################################################################
-    layer_UpConv_in8_out16 = layers.conv3d_transpose(inputs=out_block_c15,filters=128,kernel_size=kernel_size,padding='same',
+    layer_UpConv_in8_out16 = layers.conv3d_transpose(inputs=out_block_c15,filters=128,kernel_size=2,padding='same',
                                                strides=(2,2,2),kernel_initializer=initializer,
                                                activation=nonlinearity,name="weights_UpConv_in8_out16")
     layer_concat_in16 = tf.concat(axis=4, values=[layer_UpConv_in8_out16, out_block_c14])
@@ -74,12 +74,12 @@ def V_net(x,kernel_size,initializer,nonlinearity):
             active=nonlinearity
         else:
             active=None
-            layer_conv_in16_ch256 = layers.conv3d(inputs=layer_conv_in16_ch256, filters=256, kernel_size=kernel_size,
+        layer_conv_in16_ch256 = layers.conv3d(inputs=layer_conv_in16_ch256, filters=256, kernel_size=kernel_size,
                                              padding='same', kernel_initializer=initializer, activation=active,
                                              name="weights_conv_in16_ch256_" + str(i + 1))
     out_block_c24 = tf.nn.relu(tf.add(layer_conv_in16_ch256, layer_concat_in16))
     ############################## deconv2 #############################################################################
-    layer_UpConv_in16_out32 = layers.conv3d_transpose(inputs=out_block_c24,filters=64,kernel_size=kernel_size,padding='same',
+    layer_UpConv_in16_out32 = layers.conv3d_transpose(inputs=out_block_c24,filters=64,kernel_size=2,padding='same',
                                                strides=(2,2,2),kernel_initializer=initializer,
                                                activation=nonlinearity,name="weights_UpConv_in16_out32")
     layer_concat_in32 = tf.concat(axis=4, values=[layer_UpConv_in16_out32, out_block_c13])
@@ -95,7 +95,7 @@ def V_net(x,kernel_size,initializer,nonlinearity):
                                           name="weights_conv_in32_ch128_"+str(i+1))
     out_block_c23 = tf.nn.relu(tf.add(layer_conv_in32_ch128, layer_concat_in32))
     ############################## deconv3 #############################################################################
-    layer_UpConv_in32_out64 = layers.conv3d_transpose(inputs=out_block_c23,filters=32,kernel_size=kernel_size,padding='same',
+    layer_UpConv_in32_out64 = layers.conv3d_transpose(inputs=out_block_c23,filters=32,kernel_size=2,padding='same',
                                                strides=(2,2,2),kernel_initializer=initializer,
                                                activation=nonlinearity,name="weights_UpConv_in32_out64")
     layer_concat_in64 = tf.concat(axis=4, values=[layer_UpConv_in32_out64, out_block_c12])
@@ -111,7 +111,7 @@ def V_net(x,kernel_size,initializer,nonlinearity):
                                           name="weights_conv_in64_ch64_"+str(i+1))
     out_block_c22 = tf.nn.relu(tf.add(layer_conv_in64_ch64, layer_concat_in64))
     ############################ deconv4 ###############################################################################
-    layer_UpConv_in64_out128 = layers.conv3d_transpose(inputs=out_block_c22,filters=16,kernel_size=kernel_size,padding='same',
+    layer_UpConv_in64_out128 = layers.conv3d_transpose(inputs=out_block_c22,filters=16,kernel_size=2,padding='same',
                                                strides=(2,2,2),kernel_initializer=initializer,
                                                activation=nonlinearity,name="weights_UpConv_in64_out128")
     layer_concat_in128 = tf.concat(axis=4, values=[layer_UpConv_in64_out128, out_block_c11])
